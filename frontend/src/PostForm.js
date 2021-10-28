@@ -13,21 +13,20 @@ const PostForm = () => {
                         <div className = 'col'>
                             <form class="row g-3">
                                 <div class="col-md-8">
-                                    <label for="inputEmail4" class="form-label">Title</label>
-                                    <input type="email" class="form-control" id="inputEmail4"/>
+                                    <label for="title" class="form-label">Title</label>
+                                    <input type="text" class="form-control" id="title"/>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="inputPassword4" class="form-label">Tags</label>
-                                    <input type="text" class="form-control" id="inputPassword4"/>
+                                    <label for="tags" class="form-label">Tags</label>
+                                    <input type="text" class="form-control" id="tags"/>
                                 </div>
                                 <div class="col-12">
-                                    <label for="inputAddress" class="form-label">Description</label>
-                                    <textarea class="form-control" id="inputAddress" placeholder="1234 Main St"/>
+                                    <label for="desc" class="form-label">Description</label>
+                                    <textarea class="form-control" id="desc" placeholder='Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ex, doloribus quaerat. Facilis nesciunt voluptatem, nihil officia quibusdam dignissimos, rem vitae autem quidem labore esse ab!'/>
                                 </div>
-
                                 <div class="col-md-4">
-                                    <label for="inputState" class="form-label">Categorie</label>
-                                    <select id="inputState" class="form-select">
+                                    <label for="categorie" class="form-label">Categorie</label>
+                                    <select id="categorie" class="form-select">
                                     <option selected>Choose...</option>
                                     <option>...</option>
                                     </select>
