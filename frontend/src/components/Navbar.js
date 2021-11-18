@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const Navbar = () => {
     return (
         <nav className="navbar navbar-expand-lg sticky-top navbar-dark bg-dark p-4">
@@ -6,22 +8,25 @@ const Navbar = () => {
                 <span className="navbar-toggler-icon"></span>
                 </button>
                 <div className="collapse navbar-collapse" id="navbarTogglerDemo01">
-                <a className="navbar-brand" href="/">[Website name]</a>
+                    <Link className="navbar-brand" to="/profile">[Website name]</Link> 
                 <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                     <li className="nav-item">
-                    <a className="nav-link active" aria-current="page" href="/">Home</a>
+                        <Link className="nav-link active" to="/profile">Profile</Link> 
                     </li>
                     <li className="nav-item">
-                    <a className="nav-link" href="/">Add new post</a>
+                        <Link className="nav-link" to="/postForm">Add new post</Link> 
                     </li>
                     <li className="nav-item">
-                    <a className="nav-link" href="/">Friends</a>
+                        <Link className="nav-link" to="/friends">Friends</Link> 
                     </li>
                     <li className="nav-item">
-                    <a className="nav-link" href="/">Messeges</a>
+                        <Link className="nav-link" to="/messages">Messages</Link> 
                     </li>
                     <li className="nav-item">
-                    <a className="nav-link" href="/">Settings</a>
+                        <Link className="nav-link" to="/settings">Settings</Link> 
+                    </li>
+                    <li className="nav-item">
+                        <button className="btn btn-outline-light" onClick={() => {localStorage.clear(); window.open('/login','_self')}}>Logout</button>
                     </li>
                 </ul>
                 <form className="d-flex">

@@ -1,13 +1,24 @@
-import Home from './Home'
-import Login from './Login'
-import Register from './Register'
+import Login from './components/Login'
+import { Outlet } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 
 const App = () =>  {
+  
   return (
     <div className="App">
-      <Home/>
-      {/* <Register/> */}
-      {/* <Login/> */}
+      {
+        localStorage.getItem('accessToken') != null ?
+        <Navbar/> : 
+        <Login/>
+      }
+        <Outlet/>
+      {
+        localStorage.getItem('accessToken') != null ?
+        <Footer/> : 
+        ''
+      }
+
     </div>
   );
 }

@@ -36,8 +36,16 @@ const messages = [
         ]
     }
 ]
+const user = []
+const friends = []
 
-const Messages = ({user, friends}) => {
+const Messages = () => {
+
+    if (!localStorage.getItem('accessToken')?.length) {
+        window.open('/login',"_self")
+    }
+    else
+
     return (
         <div className="container py-5">
             <div className = 'row'>

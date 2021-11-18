@@ -1,4 +1,10 @@
-const Friends = ({friends}) => {
+const friends = []
+
+const Friends = () => {
+    if (!localStorage.getItem('accessToken')?.length) {
+        window.open('/login',"_self")
+    }
+    else
     return(
         <div className="container py-5">
             <div className = 'row text-center'>
@@ -24,7 +30,7 @@ const Friends = ({friends}) => {
                             </div>
                             <div className="row mb-5">
                                 { friends.map(friend => {
-                                    return <Friend friend={friend}/>
+                                    return <Friend friend={friend} key={friend.user_id}/>
                                 })}
                             </div>
                             
@@ -40,12 +46,12 @@ const Friends = ({friends}) => {
 const Friend = ({friend}) => {
     return (
         <div className="col-md-4 mb-3">
-            <div class="p-4 bg-dark border rounded-3" id={friend.user_id}>
+            <div className="p-4 bg-dark border rounded-3" id={friend.user_id}>
                 <img src={friend.img} className="card-img-top w-50 rounded-circle border border-white border-2" alt='freind foto'/>
                 <div className="card-body">
                     <h5 className="card-title">{friend.first_name} {friend.last_name}</h5>
                     <p className="card-text fst-italic">{friend.description}</p>
-                    <a href="/" class="btn btn-primary">Write a message</a>
+                    <a href="/" className="btn btn-primary">Write a message</a>
                 </div>
             </div>
         </div>
