@@ -30,13 +30,20 @@ api/
   - checkEmailAvailability GET
 
 - users/
+
   - {username} POST
+
+- post/
+
+  - {postId} GET
+  - getByAuthor?userId={id} GET
+  - newPost POST
 
 ## DATABASE - POSTGRESQL
 
 ### TABLES
 
-users (
+**users** (
 id BIGSERIAL PRIMARY KEY,
 created_at timestamp without time zone NOT NULL,
 updated_at timestamp without time zone NOT NULL,
@@ -46,13 +53,23 @@ password character varying(100),
 username character varying(15) UNIQUE
 );
 
-roles (
+**roles** (
 id BIGSERIAL PRIMARY KEY,
 name character varying(60) UNIQUE
 );
 
-user_roles (
+**user_roles** (
 user_id bigint REFERENCES users(id),
 role_id bigint REFERENCES roles(id),
 CONSTRAINT user_roles_pkey PRIMARY KEY (user_id, role_id)
+);
+
+**posts** (
+id BIGSERIAL PRIMARY KEY,
+content character varying(40),
+likes integer NOT NULL,
+public_post boolean NOT NULL,
+tags character varying(50),
+title character varying(40),
+author_id bigint REFERENCES users(id)
 );

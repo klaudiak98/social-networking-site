@@ -14,6 +14,9 @@ const Profile = () =>  {
     const [username, setUsername] = useState('')
     const [userName, setUserName] = useState('')
 
+    const [friends, setFriends] = useState([])
+    const [posts, setPosts] = useState([])
+
     const accessToken = localStorage.getItem('accessToken')
 
     useEffect(() => {
@@ -33,13 +36,28 @@ const Profile = () =>  {
             err => console.log(err)
         )
     }, [])
+
+    useEffect(() => {
+        axios.get(`http://localhost:5000/api/post/getByAuthor?userId=${userId}`, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }})
+            .then(
+                res => {
+                    console.log(res.data)
+                    setPosts(res.data)
+                }
+            )
+            .catch(
+                err => console.log(err)
+            )
+
+    }, [userId, accessToken])
     
    
     
     //const filtered_friends = friends.sort(() => 0.5 - Math.random()).slice(0,4)
-
     const filtered_friends = []
-    const posts = []
 
     return (
         <div className="container py-5">
@@ -70,7 +88,8 @@ const Profile = () =>  {
                                             content = {post.content}
                                             likes = {post.likes}
                                             key = {post.id}
-                                            public_post = {post.public}
+                                            public_post = {post.public_post}
+                                            tags = {post.tags}
                                         />
                                     )
                                 })}

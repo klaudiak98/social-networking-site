@@ -1,8 +1,84 @@
+import { useState, useEffect } from 'react'
+import axios from 'axios'
+
 const PostForm = () => {
     if (!localStorage.getItem('accessToken')?.length) {
         window.open('/login',"_self")
     }
-    else
+    
+    const [title, setTitle] = useState('')
+    const [content, setContent] = useState('')
+    //const [image, setImage] = useState(null)
+    const [userId, setUserId] = useState(null)
+    const [tags, setTags] = useState('')
+    const accessToken = localStorage.getItem('accessToken')
+
+    useEffect(() => {
+        axios.get('http://localhost:5000/api/user/me', {
+        headers: {
+            'Authorization': `Bearer ${accessToken}`
+        }})
+        .then(
+            res => {
+                console.log(res.data)
+                setUserId(res.data.id)
+            }
+        )
+        .catch(
+            err => console.log(err)
+        )
+    },[])
+
+    const saveAndPublish = () => {
+        const data = {
+            title: title,
+            content: content,
+            tags: tags,
+            public_post: true,
+            authorId: userId
+        }
+
+        axios.post(
+            "http://localhost:5000/api/post/newPost", 
+            data,
+            {headers: {'Authorization': `Bearer ${accessToken}`}}
+        )
+        .then(
+            res => {
+                console.log(res)
+                alert('new post added sucesfully! - public; go to your profile')
+            }
+        )
+        .catch(
+            err => console.log(err)
+        )
+    }
+
+    const makeDraft = () => {
+        const data = {
+            title: title,
+            content: content,
+            tags: tags,
+            public_post: false,
+            authorId: userId
+        }
+
+        axios.post(
+            "http://localhost:5000/api/post/newPost", 
+            data,
+            {headers: {'Authorization': `Bearer ${accessToken}`}}
+        )
+        .then(
+            res => {
+                console.log(res)
+                alert('new draft post added sucesfully! - private; go to your profile')
+            }
+        )
+        .catch(
+            err => console.log(err)
+        )
+    }
+
     return(
         <div className="container py-5">
             <div className = 'row'>
@@ -22,11 +98,11 @@ const PostForm = () => {
                                         </div>
                                         <div className="col-md-7">
                                             <label htmlFor="title" className="form-label">Title</label>
-                                            <input type="text" className="form-control" id="title" placeholder='Title'/>
+                                            <input type="text" className="form-control" id="title" placeholder='Title' value={title} onChange={e => setTitle(e.target.value)}/>
                                         </div>
                                         <div className="col-md-4">
                                             <label htmlFor="tags" className="form-label">Tags</label>
-                                            <input type="text" className="form-control" id="tags" placeholder='#cat #animal #love'/>
+                                            <input type="text" className="form-control" id="tags" placeholder='#cat #animal #love' value={tags} onChange={e => setTags(e.target.value)}/>
                                         </div>
                                     </div>
                                 
@@ -35,8 +111,8 @@ const PostForm = () => {
                                             <svg id="Layer_1" version="1.1" viewBox="0 0 48 48" xmlSpace="preserve" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" fill='#fff'><g><g><path d="M20.8,27.2l2.1-6.3L38,5.8l4.2,4.2L27.1,25.1L20.8,27.2z M24.7,21.9L24,24l2.1-0.7L39.4,10L38,8.6L24.7,21.9z"/></g><g><path d="M42.9,9.3l-4.2-4.2l1.4-1.4c1.2-1.2,3-1.2,4.2,0c0.6,0.6,0.9,1.3,0.9,2.1c0,0.8-0.3,1.5-0.9,2.1L42.9,9.3z M41.5,5.1    l1.4,1.4c0.2-0.2,0.3-0.4,0.3-0.7c0-0.3-0.1-0.5-0.3-0.7C42.5,4.7,41.9,4.7,41.5,5.1z"/></g></g><g><path d="M38,46H5c-1.7,0-3-1.3-3-3V10c0-1.7,1.3-3,3-3h27v2H5c-0.6,0-1,0.4-1,1v33c0,0.6,0.4,1,1,1h33c0.6,0,1-0.4,1-1V16h2v27   C41,44.7,39.7,46,38,46z"/></g></svg>
                                         </div>
                                         <div className="col-md-7">
-                                            <label htmlFor="desc" className="form-label">Description</label>
-                                            <textarea className="form-control" id="desc" placeholder='Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ex, doloribus quaerat. Facilis nesciunt voluptatem, nihil officia quibusdam dignissimos, rem vitae autem quidem labore esse ab!'/>
+                                            <label htmlFor="content" className="form-label">Content</label>
+                                            <textarea className="form-control" id="content" placeholder='Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ex, doloribus quaerat. Facilis nesciunt voluptatem, nihil officia quibusdam dignissimos, rem vitae autem quidem labore esse ab!' value={content} onChange={e => setContent(e.target.value)}/>
                                         </div>
                                         <div className="col-md-4">
                                             <label htmlFor="categorie" className="form-label">Categorie</label>
@@ -58,8 +134,8 @@ const PostForm = () => {
                                     </div>
 
                                     <div className="mb-4 d-flex gap-3">
-                                        <button type="submit" className="btn btn-primary">Save and publish</button>
-                                        <button type="submit" className="btn btn-primary">Save as draft</button>
+                                        <button type="submit" className="btn btn-primary" onClick={saveAndPublish}>Save and publish</button>
+                                        <button type="submit" className="btn btn-primary" onClick={makeDraft}>Save as draft</button>
                                     </div>
                                 </div>
                             </form>

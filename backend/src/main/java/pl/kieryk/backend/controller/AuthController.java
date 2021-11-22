@@ -24,7 +24,6 @@ import pl.kieryk.backend.payload.SignUpRequest;
 import pl.kieryk.backend.repository.RoleRepository;
 import pl.kieryk.backend.repository.UserRepository;
 import pl.kieryk.backend.security.JwtTokenProvider;
-
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Collections;
