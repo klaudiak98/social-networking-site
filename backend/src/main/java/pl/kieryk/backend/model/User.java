@@ -55,6 +55,11 @@ public class User extends DateAudit {
     @JoinColumn(name="author_id")
     private List<Post> posts = new ArrayList<>();
 
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private UserDetails userDetails;
+
     public User() {
 
     }
