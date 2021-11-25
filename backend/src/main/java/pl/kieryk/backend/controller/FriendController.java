@@ -7,9 +7,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.kieryk.backend.model.User;
+import pl.kieryk.backend.payload.UserSummary;
 import pl.kieryk.backend.repository.FriendRepository;
 import pl.kieryk.backend.repository.UserRepository;
 import pl.kieryk.backend.service.FriendService;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -34,9 +37,14 @@ public class FriendController {
     }
 
     @GetMapping("friends/listFriends")
-    public ResponseEntity<List<User>> getFriends(@RequestParam("userId")Long userId) {
-        List<User> myFriends = friendService.getFriends(userId);
-        return new ResponseEntity<List<User>>(myFriends, HttpStatus.OK);
+    public ResponseEntity<List<UserSummary>> getFriends(@RequestParam("userId")Long userId) {
+
+        List<UserSummary> friendsList = new ArrayList<>();
+        friendService.getFriends(userId).forEach(fr -> {
+            friendsList.add(new UserSummary(fr.getId(), fr.getUsername(), fr.getName()));
+        });
+
+        return new ResponseEntity<List<UserSummary>>(friendsList, HttpStatus.OK);
     }
 
 }
