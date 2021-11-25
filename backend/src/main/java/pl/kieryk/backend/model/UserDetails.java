@@ -2,6 +2,7 @@ package pl.kieryk.backend.model;
 
 import lombok.Data;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
@@ -26,5 +27,10 @@ public class UserDetails {
 
     public UserDetails() {
     }
-   
+
+    public UserDetails(String description, String imgURL, User user) {
+        this.description = description;
+        this.imgURL = imgURL;
+        this.user = user;
+    }
 }
