@@ -52,14 +52,27 @@ const Profile = () =>  {
                 err => console.log(err)
             )
 
+        axios.get(`http://localhost:5000/api/friends/listFriends?userId=${userId}`, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }})
+            .then(
+                res => {
+                    console.log(res.data)
+                    setFriends(res.data)
+                }
+            )
+            .catch(
+                err => console.log(err)
+            )
+
     }, [userId, accessToken])
     
    
     
-    //const filtered_friends = friends.sort(() => 0.5 - Math.random()).slice(0,4)
-    const filtered_friends = []
+    const filtered_friends = friends.sort(() => 0.5 - Math.random()).slice(0,4)
 
-    return (
+     return (
         <div className="container py-5">
             <div className = 'row'>
                 <div className = 'col'>
@@ -106,12 +119,7 @@ const Profile = () =>  {
                             <div className = 'row text-center'>
 
                                 {filtered_friends.map(friend => {
-                                    return (
-                                        <div className = 'col-md-3' id = {friend.user_id} key = {friend.user_id}>
-                                            <h5>{friend.first_name} {friend.last_name}</h5>
-                                            <img src={friend.img} className="card-img-top w-50 mx-auto rounded-circle border border-white border-2 mb-5" alt="friend profile"/>
-                                        </div>
-                                    )
+                                    return <Friend friend={friend} key={friend.id}/>
                                 })}
                             </div>
                         </div>
@@ -119,6 +127,19 @@ const Profile = () =>  {
                 </div>
             </div>
         </div>       
+    )
+}
+
+const Friend = ({friend}) => {
+    return (
+        <div className = 'col-md-3' id = {friend.id} key = {friend.id}>
+            <h5>{friend.name}</h5>
+            {
+                friend.img ? 
+                <img src={friend.img} className="card-img-top w-50 mx-auto rounded-circle border border-white border-2 mb-5" alt='friend foto'/>:
+                <svg id="Layer_1" version="1.1" viewBox="0 0 48 48" xmlSpace="preserve" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" fill='#fff' height='5em'><g><path d="M24,26c6.6,0,12-5.4,12-12S30.6,2,24,2c-6.6,0-12,5.4-12,12S17.4,26,24,26z M24,4c5.5,0,10,4.5,10,10s-4.5,10-10,10   c-5.5,0-10-4.5-10-10S18.5,4,24,4z" /><path d="M33,28H15C7.8,28,2,33.8,2,41v5h2v-5c0-6.1,4.9-11,11-11h18c6.1,0,11,4.9,11,11v5h2v-5C46,33.8,40.2,28,33,28z"/></g></svg>
+            } 
+        </div>
     )
 }
 
