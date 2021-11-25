@@ -39,6 +39,10 @@ api/
   - getByAuthor?userId={id} GET
   - newPost POST
 
+- friends/
+  - listFriends?userId={id} GET
+  - addFriend?userId={id1}&friendId={id2} GET
+
 ## DATABASE - POSTGRESQL
 
 ### TABLES
@@ -51,6 +55,12 @@ email character varying(40) UNIQUE,
 name character varying(40),
 password character varying(100),
 username character varying(15) UNIQUE
+);
+
+**usersdetails** (
+user_id bigint PRIMARY KEY REFERENCES users(id),
+description character varying(250),
+imgurl character varying(50)
 );
 
 **roles** (
@@ -72,4 +82,11 @@ public_post boolean NOT NULL,
 tags character varying(50),
 title character varying(40),
 author_id bigint REFERENCES users(id)
+);
+
+**friends** (
+id BIGSERIAL PRIMARY KEY,
+created_date timestamp without time zone,
+first_user_id bigint REFERENCES users(id),
+second_user_id bigint REFERENCES users(id)
 );
