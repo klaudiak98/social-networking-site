@@ -28,6 +28,7 @@ api/
   - me GET
   - checkUsernameAvailability GET
   - checkEmailAvailability GET
+  - changePassword/{userId} PATCH
 
 - users/
 
