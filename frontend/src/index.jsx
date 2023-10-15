@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
@@ -11,8 +11,9 @@ import Friends from './components/Friends';
 import Messages from './components/Messages';
 import Settings from './components/Settings';
 
-const rootElement = document.getElementById("root");
-ReactDOM.render(
+const root = createRoot(document.getElementById('root'));
+
+root.render(
   <BrowserRouter>
     <Routes>
       <Route path="/login" element={<Login />} />
@@ -33,8 +34,7 @@ ReactDOM.render(
               }
             />
     </Routes>
-  </BrowserRouter>,
-  rootElement
+  </BrowserRouter>
 );
 
 // If you want to start measuring performance in your app, pass a function
