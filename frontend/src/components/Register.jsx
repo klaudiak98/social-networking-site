@@ -1,80 +1,44 @@
 import axios from "axios"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Link } from "react-router-dom"
+import Modal from './Modal'
 
 const Register = () => {
 
     const [name, setName] = useState('')
-    const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [repassword, setRepassword] = useState('')
-    const [repasswordCorrect, setRepasswordCorrect] = useState(false)
     const [emailAvailability, setEmailAvailability] = useState(false)
-    const [usernameAvailability, setUsernameAvailability] = useState(false)
+    const passwordCorrect = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password)
+    const samePasswords = password === repassword;
 
-    useEffect(() => {
-
-        axios.get('http://localhost:5000/api/user/checkEmailAvailability?email='+email)
-        .then(
-            res => {
-                setEmailAvailability(res.data.available) 
-            }
-        )
-        .catch(
-            err => console.log(err)
-        )
-    }, [email]);
-
-    useEffect(() => {
-
-        axios.get('http://localhost:5000/api/user/checkUsernameAvailability?username='+username)
-        .then(
-            res => {
-                setUsernameAvailability(res.data.available) 
-            }
-        )
-        .catch(
-            err => console.log(err)
-        )   
-
-    }, [username])
-
-    useEffect(() => {
-
-        password === repassword ? setRepasswordCorrect(true) : setRepasswordCorrect(false)
-
-    },[password, repassword])
-
-    const handleClick = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        
 
-        // if user not exist
-        // if password and re-pass is ok
+        await axios.get('http://localhost:5000/api/user/checkEmailAvailability?email='+email)
+        .then(res => {setEmailAvailability(res.data.available)})
+        .catch(err => {setEmailAvailability(false)});
 
-        (emailAvailability && usernameAvailability && repasswordCorrect) ?
-
-       
-        axios.post("http://localhost:5000/api/auth/signup", {
-                "name": name,
-                "username": username,
-                "email": email,
-                "password": password
-            })
+        (emailAvailability && passwordCorrect && samePasswords)
+        ? await axios.post("http://localhost:5000/api/auth/signup", {
+            "name": name,
+            "email": email,
+            "password": password
+        })
         .then(
             res => {
-                alert('register ok')
-                // go to login page
+                new bootstrap.Modal(document.getElementById('newAccount')).toggle()
             }
         )
         .catch(
-            err => console.log(err)
-        ) :
-
-        alert(`cannot register - wrong data; email: ${emailAvailability}, username: ${usernameAvailability}, password: ${repasswordCorrect}`);
-
+            err => {
+                err.code === 'ERR_NETWORK'
+                ?  new bootstrap.Modal(document.getElementById('networkError')).toggle()
+                :  new bootstrap.Modal(document.getElementById('otherError')).toggle()
+            }
+        )
+        : new bootstrap.Modal(document.getElementById('otherError')).toggle()
     }
 
     return (
@@ -82,44 +46,64 @@ const Register = () => {
             <div className = 'row'>
                 <div className="col">
                     <h2 className="row justify-content-center">Create new account</h2>
-                    <div className="row justify-content-center">
-                        <form className = 'col-md-6' onSubmit={handleClick}>
-
+                    <div className="row justify-content-center w-70">
+                        <form className = 'col-md-6' onSubmit={handleSubmit}>
                             <div className="row mb-3">
                                 <label htmlFor="name" className="form-label">Your name</label>
-                                <input type="text" className="form-control" id="name" value={name} onChange={e => setName(e.target.value)}/>
+                                <input 
+                                    type="text" 
+                                    className="form-control" 
+                                    id="name" 
+                                    value={name} 
+                                    onChange={e => setName(e.target.value)}/>
                             </div>
-
-                            <div className="row mb-3">
-                                <label htmlFor="username" className="form-label">Username</label>
-                                <input type="text" className="form-control" id="username" value={username} onChange={e => setUsername(e.target.value)}/>
-                            </div>
-
                             <div className="row mb-3">
                                 <label htmlFor="email" className="form-label">Email address</label>
-                                <input type="email" className="form-control" id="email" aria-describedby="emailHelp" value={email} onChange={e => setEmail(e.target.value)}/>
+                                <input 
+                                    type="email" 
+                                    className="form-control" 
+                                    id="email" 
+                                    aria-describedby="emailHelp" 
+                                    value={email} 
+                                    onChange={e => setEmail(e.target.value)}
+                                    autoComplete="email"/>
                                 <div id="emailHelp" className="form-text">We'll never share your email with anyone else.</div>
                             </div>
-
                             <div className="row mb-3">
                                 <label htmlFor="password" className="form-label">Password</label>
-                                <input type="password" className="form-control" id="password" value={password} onChange={e => setPassword(e.target.value)} aria-describedby="passwordHelp"/>
-                                <div id="passwordHelp" className="form-text">Password 6-20 char</div>
+                                <input 
+                                    type="password" 
+                                    className="form-control" 
+                                    id="password" 
+                                    value={password} 
+                                    onChange={e => setPassword(e.target.value)} aria-describedby="passwordHelp" 
+                                    autoComplete="new-password"/>
+                                <div id="passwordHelp" className="form-text">Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character</div>
                             </div>
-                            
                             <div className="row mb-3">
                                 <label htmlFor="re-password" className="form-label">Repeat password</label>
-                                <input type="password" className="form-control" id="re-password" value={repassword} onChange={e => setRepassword(e.target.value)}/>
+                                <input 
+                                    type="password" 
+                                    className="form-control" 
+                                    id="re-password"
+                                    value={repassword} 
+                                    onChange={e => setRepassword(e.target.value)}
+                                    autoComplete="new-password"/>
                             </div>
-                            
-                            <button className="row btn btn-primary" type='submit'>Register</button>
-
+                            <button 
+                                className="row btn btn-primary" 
+                                type='submit'
+                                disabled={!name.length || !email.length || !password.length || !passwordCorrect || !samePasswords}>Register</button>
                         </form>
                     </div>
-                    <Link className="row justify-content-center" to='/login'>Login</Link>
+                    <div className="row justify-content-center">
+                        <Link className='fit-content' to='/login'>Login</Link>
+                    </div>
                 </div>
-                
             </div>
+            <Modal id='newAccount' title='Congratulations!' message='New account has been created!'/>
+            <Modal id='networkError' title='Error' message='Network error! Try again later.'/>
+            <Modal id='otherError' title='Error' message='Something went wrong.'/>
         </div>
     )
 }

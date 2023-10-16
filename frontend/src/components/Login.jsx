@@ -1,35 +1,38 @@
 import axios from 'axios'
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import Modal from './Modal'
 
 const Login = () => {
+    let navigate = useNavigate();
 
-    const [usernameOrEmail, setUsernameOrEmail] = useState('')
+    const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
-    const handleClick = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         const data = {
-            "usernameOrEmail": usernameOrEmail,
+            "email": email,
             "password": password
         }
 
-        axios.post("http://localhost:5000/api/auth/signin", data)
+        await axios.post("http://localhost:5000/api/auth/signin", data)
         .then(
             res => {
                 localStorage.setItem('accessToken',res.data.accessToken)
-                window.open('profile',"_self")
+                navigate("/profile");
             }
         )
         .catch(
             err => {
-                alert('bad credential - try again!')
+                err.code === 'ERR_NETWORK'
+                ?  new bootstrap.Modal(document.getElementById('networkError')).toggle()
+                :  new bootstrap.Modal(document.getElementById('badCredential')).toggle()
+
                 setPassword('')
-                console.log(err)
             }
         )
-
     }
 
     return (
@@ -37,23 +40,43 @@ const Login = () => {
             <div className = 'row'>
                 <div className="col">
                     <h2 className="row justify-content-center">Login</h2>
-                    <div className="row justify-content-center">
-                        <form className = 'col-md-6' onSubmit={handleClick}>
+                    <div className="row justify-content-center w-70">
+                        <form className = 'col-md-6' onSubmit={handleSubmit}>
                             <div className="row mb-3">
-                                <label htmlFor="usernameOrEmail" className="form-label">Username or email</label>
-                                <input type="text" className="form-control" id="usernameOrEmail" aria-describedby="usernameOrEmailHelp" value={usernameOrEmail} onChange={e => setUsernameOrEmail(e.target.value)}/>
-                                <div id="usernameOrEmailHelp" className="form-text">We'll never share your email with anyone else.</div>
+                                <label htmlFor="email" className="form-label">Email</label>
+                                <input 
+                                    type="email" 
+                                    className="form-control" 
+                                    id="email" 
+                                    aria-describedby="emailHelp" 
+                                    value={email} 
+                                    onChange={e => setEmail(e.target.value)}
+                                    autoComplete="email"/>
+                                <div id="emailHelp" className="form-text">We'll never share your email with anyone else.</div>
                             </div>
                             <div className="row mb-3">
                                 <label htmlFor="password" className="form-label">Password</label>
-                                <input type="password" className="form-control" id="password" value={password} onChange={e => setPassword(e.target.value)}/>
+                                <input 
+                                    type="password" 
+                                    className="form-control" 
+                                    id="password" 
+                                    value={password} 
+                                    onChange={e => setPassword(e.target.value)}
+                                    autoComplete='password'/>
                             </div>
-                            <button className="row btn btn-primary" type='submit'>Login</button>
+                            <button 
+                                className="row btn btn-primary" 
+                                type='submit'
+                                disabled={!email.length || !password.length}>Login</button>
                         </form>
                     </div>
-                    <Link className="row justify-content-center" to='/register'>Create new account</Link>
+                    <div className="row justify-content-center">
+                        <Link className='fit-content' to='/register'>Create new account</Link>
+                    </div>
                 </div>
             </div>   
+            <Modal id='badCredential' title='Error' message='Bad credential!'/>
+            <Modal id='networkError' title='Error' message='Network error! Try again later.'/>
         </div>     
     )
 }
