@@ -6,14 +6,14 @@ import java.time.Instant;
 @Data
 public class UserProfile {
     private Long id;
-    private String username;
-    private String name;
+    private String firstName;
+    private String lastName;
     private Instant joinedAt;
 
-    public UserProfile(Long id, String username, String name, Instant joinedAt) {
+    public UserProfile(Long id, String firstName, String lastName, Instant joinedAt) {
         this.id = id;
-        this.username = username;
-        this.name = name;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.joinedAt = joinedAt;
     }
 

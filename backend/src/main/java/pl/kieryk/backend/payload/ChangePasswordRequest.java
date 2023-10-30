@@ -8,14 +8,14 @@ import javax.validation.constraints.Size;
 @Data
 public class ChangePasswordRequest {
     @NotBlank
-    @Size(min = 6, max = 20)
+    @Size(min = 6, max = 100)
     private String oldPassword;
 
     @NotBlank
-    @Size(min = 6, max = 20)
+    @Size(min = 6, max = 100)
     private String newPassword;
 
     @NotBlank
-    @Size(min = 6, max = 20)
+    @Size(min = 6, max = 100)
     private String newPasswordAgain;
 }

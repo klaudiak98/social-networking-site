@@ -5,12 +5,14 @@ import lombok.Data;
 @Data
 public class UserSummary {
     private Long id;
-    private String username;
-    private String name;
+    private String email;
+    private String firstName;
+    private String lastName;
 
-    public UserSummary(Long id, String username, String name) {
+    public UserSummary(Long id, String email, String firstName, String lastName) {
         this.id = id;
-        this.username = username;
-        this.name = name;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 }
