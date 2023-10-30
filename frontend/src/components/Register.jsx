@@ -5,7 +5,8 @@ import Modal from './Modal'
 
 const Register = () => {
 
-    const [name, setName] = useState('')
+    const [firstName, setFirstName] = useState('')
+    const [lastName, setLastName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [repassword, setRepassword] = useState('')
@@ -22,7 +23,8 @@ const Register = () => {
 
         (emailAvailability && passwordCorrect && samePasswords)
         ? await axios.post("http://localhost:5000/api/auth/signup", {
-            "name": name,
+            "firstName": firstName,
+            "lastName": lastName,
             "email": email,
             "password": password
         })
@@ -49,13 +51,22 @@ const Register = () => {
                     <div className="row justify-content-center w-70">
                         <form className = 'col-md-6' onSubmit={handleSubmit}>
                             <div className="row mb-3">
-                                <label htmlFor="name" className="form-label">Your name</label>
+                                <label htmlFor="firstName" className="form-label">Your first name</label>
                                 <input 
                                     type="text" 
                                     className="form-control" 
-                                    id="name" 
-                                    value={name} 
-                                    onChange={e => setName(e.target.value)}/>
+                                    id="firstName" 
+                                    value={firstName} 
+                                    onChange={e => setFirstName(e.target.value)}/>
+                            </div>
+                            <div className="row mb-3">
+                                <label htmlFor="lastName" className="form-label">Your last name</label>
+                                <input 
+                                    type="text" 
+                                    className="form-control" 
+                                    id="lastName" 
+                                    value={lastName} 
+                                    onChange={e => setLastName(e.target.value)}/>
                             </div>
                             <div className="row mb-3">
                                 <label htmlFor="email" className="form-label">Email address</label>
@@ -93,7 +104,7 @@ const Register = () => {
                             <button 
                                 className="row btn btn-primary" 
                                 type='submit'
-                                disabled={!name.length || !email.length || !password.length || !passwordCorrect || !samePasswords}>Register</button>
+                                disabled={!firstName.length || !lastName.length || !email.length || !password.length || !passwordCorrect || !samePasswords}>Register</button>
                         </form>
                     </div>
                     <div className="row justify-content-center">
