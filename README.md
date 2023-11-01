@@ -26,13 +26,12 @@ api/
 - user/
 
   - me GET
-  - checkUsernameAvailability GET
   - checkEmailAvailability GET
   - changePassword/{userId} PATCH
 
 - users/
 
-  - {username} POST
+  - {userId} POST
 
 - post/
 
@@ -53,9 +52,9 @@ id BIGSERIAL PRIMARY KEY,
 created_at timestamp without time zone NOT NULL,
 updated_at timestamp without time zone NOT NULL,
 email character varying(40) UNIQUE,
-name character varying(40),
-password character varying(100),
-username character varying(15) UNIQUE
+firstName character varying(40),
+lastName character varying(40),
+password character varying(100)
 );
 
 **usersdetails** (

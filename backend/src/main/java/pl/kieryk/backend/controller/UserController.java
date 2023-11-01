@@ -35,14 +35,9 @@ public class UserController {
     @GetMapping("/user/me")
     @PreAuthorize("hasRole('USER')")
     public UserSummary getCurrentUser(@CurrentUser UserPrincipal currentUser) {
-        UserSummary userSummary = new UserSummary(currentUser.getId(), currentUser.getUsername(), currentUser.getName());
+        UserSummary userSummary = new UserSummary(currentUser.getId(), currentUser.getEmail(),
+                currentUser.getFirstName(), currentUser.getLastName());
         return userSummary;
-    }
-
-    @GetMapping("/user/checkUsernameAvailability")
-    public UserIdentityAvailability checkUsernameAvailability(@RequestParam(value = "username") String username) {
-        Boolean isAvailable = !userRepository.existsByUsername(username);
-        return new UserIdentityAvailability(isAvailable);
     }
 
     @GetMapping("/user/checkEmailAvailability")
@@ -51,19 +46,20 @@ public class UserController {
         return new UserIdentityAvailability(isAvailable);
     }
 
-    @GetMapping("/users/{username}")
-    public UserProfile getUserProfile(@PathVariable(value = "username") String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+    @GetMapping("/users/{userId}")
+    public UserProfile getUserProfile(@PathVariable(value = "userId") Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
 
-
-        UserProfile userProfile = new UserProfile(user.getId(), user.getUsername(), user.getName(), user.getCreatedAt());
+        UserProfile userProfile = new UserProfile(user.getId(), user.getFirstName(), user.getLastName(),
+                user.getCreatedAt());
 
         return userProfile;
     }
 
     @PatchMapping("/user/changePassword/{userId}")
-    public ResponseEntity<String> changesPassword(@PathVariable(value = "userId") Long userId, @RequestBody ChangePasswordRequest changePasswordRequest) {
+    public ResponseEntity<String> changesPassword(@PathVariable(value = "userId") Long userId,
+            @RequestBody ChangePasswordRequest changePasswordRequest) {
 
         if (!userRepository.existsById(userId)) {
             return ResponseEntity.badRequest().body("User not exist!");
@@ -73,18 +69,16 @@ public class UserController {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        user.getUsername(),
-                        changePasswordRequest.getOldPassword()
-                )
-        );
+                        user.getEmail(),
+                        changePasswordRequest.getOldPassword()));
 
         if (!authentication.isAuthenticated()) {
             return ResponseEntity.badRequest().body("Bad credentials!");
         }
 
         if (changePasswordRequest.getNewPassword().equals(changePasswordRequest.getNewPasswordAgain())) {
-           user.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPasswordAgain()));
-           userRepository.save(user);
+            user.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPasswordAgain()));
+            userRepository.save(user);
             return ResponseEntity.status(200).body("Password changed");
         } else {
             return ResponseEntity.badRequest().body("Password doesn't match!");

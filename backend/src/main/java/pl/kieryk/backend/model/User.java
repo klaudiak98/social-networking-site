@@ -15,59 +15,53 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "users", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {
-                "username"
-        }),
-        @UniqueConstraint(columnNames = {
-                "email"
-        })
+                @UniqueConstraint(columnNames = {
+                                "email"
+                })
 })
 public class User extends DateAudit {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
 
-    @NotBlank
-    @Size(max = 40)
-    private String name;
+        @NotBlank
+        @Size(max = 40)
+        private String firstName;
 
-    @NotBlank
-    @Size(max = 15)
-    private String username;
+        @NotBlank
+        @Size(max = 40)
+        private String lastName;
 
-    @NaturalId
-    @NotBlank
-    @Size(max = 40)
-    @Email
-    private String email;
+        @NaturalId
+        @NotBlank
+        @Size(max = 40)
+        @Email
+        private String email;
 
-    @NotBlank
-    @Size(max = 100)
-    private String password;
+        @NotBlank
+        @Size(max = 100)
+        private String password;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<>();
+        @ManyToMany(fetch = FetchType.LAZY)
+        @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+        private Set<Role> roles = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name="author_id")
-    private List<Post> posts = new ArrayList<>();
+        @OneToMany(cascade = CascadeType.ALL)
+        @JoinColumn(name = "author_id")
+        private List<Post> posts = new ArrayList<>();
 
+        @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+        @PrimaryKeyJoinColumn
+        private UserDetails userDetails;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn
-    private UserDetails userDetails;
+        public User() {
 
-    public User() {
+        }
 
-    }
-
-    public User(String name, String username, String email, String password) {
-        this.name = name;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-    }
+        public User(String firstName, String lastName, String email, String password) {
+                this.firstName = firstName;
+                this.lastName = lastName;
+                this.email = email;
+                this.password = password;
+        }
 }

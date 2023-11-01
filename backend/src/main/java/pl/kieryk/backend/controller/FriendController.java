@@ -41,7 +41,7 @@ public class FriendController {
 
         List<UserSummary> friendsList = new ArrayList<>();
         friendService.getFriends(userId).forEach(fr -> {
-            friendsList.add(new UserSummary(fr.getId(), fr.getUsername(), fr.getName()));
+            friendsList.add(new UserSummary(fr.getId(), fr.getEmail(), fr.getFirstName(), fr.getLastName()));
         });
 
         return new ResponseEntity<List<UserSummary>>(friendsList, HttpStatus.OK);

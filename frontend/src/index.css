@@ -26,3 +26,11 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.w-70 {
+  width: 70vw;
+}
+
+.fit-content {
+  width: fit-content;
+}
