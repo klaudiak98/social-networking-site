@@ -9,10 +9,12 @@ const Profile = () =>  {
         window.open('login',"_self")
     }
 
-    // id, username, name
+    // id, email, first name, last name
     const [userId, setUserId] = useState(null)
-    const [username, setUsername] = useState('')
-    const [userName, setUserName] = useState('')
+    const [firstName, setFirstName] = useState('')
+    const [lastName, setLastName] = useState('')
+
+    const fullName = firstName + ' ' + lastName
 
     const [friends, setFriends] = useState([])
     const [posts, setPosts] = useState([])
@@ -20,16 +22,18 @@ const Profile = () =>  {
     const accessToken = localStorage.getItem('accessToken')
 
     useEffect(() => {
-        axios.get('http://localhost:5000/api/user/me', {
-        headers: {
-            'Authorization': `Bearer ${accessToken}`
-        }})
+        const getUserInfo = async () =>
+            await axios.get('http://localhost:5000/api/user/me', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }})
+
+        getUserInfo()
         .then(
             res => {
-                console.log(res.data)
                 setUserId(res.data.id)
-                setUsername(res.data.username)
-                setUserName(res.data.name)
+                setFirstName(res.data.firstName)
+                setLastName(res.data.lastName)
             }
         )
         .catch(
@@ -38,37 +42,41 @@ const Profile = () =>  {
     }, [])
 
     useEffect(() => {
-        axios.get(`http://localhost:5000/api/post/getByAuthor?userId=${userId}`, {
+        const getPosts = async () => 
+            await axios.get(`http://localhost:5000/api/post/getByAuthor?userId=${userId}`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
             }})
-            .then(
+
+        const getFriendsList = async () =>
+            await axios.get(`http://localhost:5000/api/friends/listFriends?userId=${userId}`, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }})
+
+        getPosts()
+        .then(
                 res => {
                     console.log(res.data)
                     setPosts(res.data)
                 }
             )
-            .catch(
-                err => console.log(err)
-            )
+        .catch(
+            err => console.log(err)
+        )
 
-        axios.get(`http://localhost:5000/api/friends/listFriends?userId=${userId}`, {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            }})
-            .then(
-                res => {
-                    console.log(res.data)
-                    setFriends(res.data)
-                }
-            )
-            .catch(
-                err => console.log(err)
-            )
+        getFriendsList()
+        .then(
+            res => {
+                console.log(res.data)
+                setFriends(res.data)
+            }
+        )
+        .catch(
+            err => console.log(err)
+        )
 
     }, [userId, accessToken])
-    
-   
     
     const filtered_friends = friends.sort(() => 0.5 - Math.random()).slice(0,4)
 
@@ -81,7 +89,7 @@ const Profile = () =>  {
                             <img src = 'https://cdn-icons-png.flaticon.com/512/194/194938.png' alt='profile foto' className='w-75 rounded-circle border border-white border-2'></img>
                         </div>
                         <div className = 'col-md-9'>
-                            <h2>Hello {username}</h2>
+                            <h2>Hello {fullName}</h2>
                             <q><i>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus neque quasi a enim obcaecati impedit eaque nam, sit recusandae ex! Obcaecati expedita voluptas dolorum vel mollitia deleniti, praesentium alias ullam quo adipisci doloremque itaque est quidem dolorem veritatis voluptate. Sint, rerum suscipit architecto magnam, repudiandae nostrum fugit ab maxime ullam et maiores nam doloremque tenetur omnis consequatur dicta, deserunt inventore! Sit ea iusto, reprehenderit necessitatibus ullam hic atque aspernatur nostrum quasi, harum voluptatibus repellat, aperiam corrupti vero quisquam doloribus deleniti. Nulla harum saepe molestias! Amet eaque ducimus inventore deserunt nihil animi ullam odit temporibus quo mollitia repellat, porro dolorum assumenda.</i></q>
                         </div>
                     </div>
