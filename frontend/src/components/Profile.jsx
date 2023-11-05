@@ -1,20 +1,12 @@
 import axios from "axios"
 import Post from "./Post"
 import { useState, useEffect } from "react"
-
+import { useOutletContext } from "react-router-dom";
 
 const Profile = () =>  {    
 
-    if (!localStorage.getItem('accessToken')?.length) {
-        window.open('login',"_self")
-    }
-
-    // id, email, first name, last name
-    const [userId, setUserId] = useState(null)
-    const [firstName, setFirstName] = useState('')
-    const [lastName, setLastName] = useState('')
-
-    const fullName = firstName + ' ' + lastName
+    const [user, setUser] = useOutletContext();
+    const fullName = user.firstName + ' ' + user.lastName
 
     const [friends, setFriends] = useState([])
     const [posts, setPosts] = useState([])
@@ -22,45 +14,25 @@ const Profile = () =>  {
     const accessToken = localStorage.getItem('accessToken')
 
     useEffect(() => {
-        const getUserInfo = async () =>
-            await axios.get('http://localhost:5000/api/user/me', {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            }})
-
-        getUserInfo()
-        .then(
-            res => {
-                setUserId(res.data.id)
-                setFirstName(res.data.firstName)
-                setLastName(res.data.lastName)
-            }
-        )
-        .catch(
-            err => console.log(err)
-        )
-    }, [])
-
-    useEffect(() => {
         const getPosts = async () => 
-            await axios.get(`http://localhost:5000/api/post/getByAuthor?userId=${userId}`, {
+            await axios.get(`http://localhost:5000/api/post/getByAuthor?userId=${user.id}`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
             }})
 
         const getFriendsList = async () =>
-            await axios.get(`http://localhost:5000/api/friends/listFriends?userId=${userId}`, {
+            await axios.get(`http://localhost:5000/api/friends/listFriends?userId=${user.id}`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
             }})
 
         getPosts()
         .then(
-                res => {
-                    console.log(res.data)
-                    setPosts(res.data)
-                }
-            )
+            res => {
+                console.log(res.data)
+                setPosts(res.data)
+            }
+        )
         .catch(
             err => console.log(err)
         )
@@ -76,7 +48,7 @@ const Profile = () =>  {
             err => console.log(err)
         )
 
-    }, [userId, accessToken])
+    }, [user.id, accessToken])
     
     const filtered_friends = friends.sort(() => 0.5 - Math.random()).slice(0,4)
 
