@@ -1,11 +1,10 @@
-const user = []
+import { useOutletContext } from "react-router-dom";
 const Settings = () => {
-    if (!localStorage.getItem('accessToken')?.length) {
-        window.open('/login',"_self")
-    }
-    else
+
+    const [user, setUser] = useOutletContext();
+
     return (
-<div className="container py-5">
+        <div className="container py-5">
             <div className = 'row'>
                 <div className = 'col'>
                     <div className = 'row mb-3'>
@@ -23,11 +22,11 @@ const Settings = () => {
                                         </div>
                                         <div className="col-md-5">
                                             <label htmlFor="firstName" className="form-label">First name</label>
-                                            <input type="text" className="form-control" id="firstName" placeholder={user.first_name}/>
+                                            <input type="text" className="form-control" id="firstName" placeholder={user.firstName}/>
                                         </div>
                                         <div className="col-md-6">
                                             <label htmlFor="lastName" className="form-label">Last name</label>
-                                            <input type="text" className="form-control" id="lastName" placeholder={user.last_name}/>
+                                            <input type="text" className="form-control" id="lastName" placeholder={user.lastName}/>
                                         </div>
                                     </div>
                                 

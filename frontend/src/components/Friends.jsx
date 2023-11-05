@@ -1,44 +1,32 @@
 import { useState, useEffect } from "react"
 import axios from "axios"
+import { useOutletContext } from "react-router-dom";
 
 const Friends = () => {
-    if (!localStorage.getItem('accessToken')?.length) {
-        window.open('/login',"_self")
-    }
-    const [userId, setUserId] = useState(null)
-    const [friends, setFriends] = useState([])
+
+    const [user, setUser] = useOutletContext();
     const accessToken = localStorage.getItem('accessToken')
-    
+
+    const [friends, setFriends] = useState([])
+
     useEffect(() => {
-        axios.get('http://localhost:5000/api/user/me', {
-        headers: {
-            'Authorization': `Bearer ${accessToken}`
-        }})
+        const getFriends = async () =>
+            await axios.get(`http://localhost:5000/api/friends/listFriends?userId=${user.id}`, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }})
+
+        getFriends()
         .then(
-            res => setUserId(res.data.id)
-            
+            res => {
+                console.log(res.data)
+                setFriends(res.data)
+            }
         )
         .catch(
             err => console.log(err)
         )
-    }, [accessToken])
-
-    useEffect(() => {
-        axios.get(`http://localhost:5000/api/friends/listFriends?userId=${userId}`, {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            }})
-            .then(
-                res => {
-                    console.log(res.data)
-                    setFriends(res.data)
-                }
-            )
-            .catch(
-                err => console.log(err)
-            )
-
-    }, [userId, accessToken])
+    }, [user.id, accessToken])
 
     return(
         <div className="container py-5">

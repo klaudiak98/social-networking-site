@@ -1,44 +1,27 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import { useOutletContext } from "react-router-dom";
 
 const PostForm = () => {
-    if (!localStorage.getItem('accessToken')?.length) {
-        window.open('/login',"_self")
-    }
-    
+
+    const [user, setUser] = useOutletContext();
+    const accessToken = localStorage.getItem('accessToken')
+
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
     //const [image, setImage] = useState(null)
-    const [userId, setUserId] = useState(null)
     const [tags, setTags] = useState('')
-    const accessToken = localStorage.getItem('accessToken')
 
-    useEffect(() => {
-        axios.get('http://localhost:5000/api/user/me', {
-        headers: {
-            'Authorization': `Bearer ${accessToken}`
-        }})
-        .then(
-            res => {
-                console.log(res.data)
-                setUserId(res.data.id)
-            }
-        )
-        .catch(
-            err => console.log(err)
-        )
-    },[])
-
-    const saveAndPublish = () => {
+    const saveAndPublish = async () => {
         const data = {
             title: title,
             content: content,
             tags: tags,
             public_post: true,
-            authorId: userId
+            authorId: user.id
         }
 
-        axios.post(
+        await axios.post(
             "http://localhost:5000/api/post/newPost", 
             data,
             {headers: {'Authorization': `Bearer ${accessToken}`}}
@@ -54,16 +37,16 @@ const PostForm = () => {
         )
     }
 
-    const makeDraft = () => {
+    const makeDraft = async () => {
         const data = {
             title: title,
             content: content,
             tags: tags,
             public_post: false,
-            authorId: userId
+            authorId: user.id
         }
 
-        axios.post(
+        await axios.post(
             "http://localhost:5000/api/post/newPost", 
             data,
             {headers: {'Authorization': `Bearer ${accessToken}`}}
